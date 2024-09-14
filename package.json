@@ -18,10 +18,12 @@
     "@react-navigation/stack": "^6.4.1",
     "@reduxjs/toolkit": "^2.2.7",
     "expo": "^51.0.32",
+    "expo-linear-gradient": "^13.0.2",
     "expo-status-bar": "~1.12.1",
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "react-native": "^0.75.2",
+    "react-native-action-sheet": "^2.2.0",
     "react-native-gesture-handler": "^2.19.0",
     "react-native-get-random-values": "^1.11.0",
     "react-native-paper": "^5.12.5",
@@ -34,7 +36,9 @@
     "uuid": "^10.0.0"
   },
   "devDependencies": {
-    "@babel/core": "^7.20.0"
+    "@babel/core": "^7.20.0",
+    "@expo/react-native-action-sheet": "^4.1.0",
+    "@react-native-async-storage/async-storage": "^2.0.0"
   },
   "private": true
 }

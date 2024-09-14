@@ -1,73 +1,97 @@
-import React from 'react';
-import { StyleSheet, View, TouchableHighlight, Text, Image } from 'react-native';
+import React, { useState } from 'react';
+import { StyleSheet, View, TouchableOpacity, Text, Image, Animated, Easing } from 'react-native';
 import PropTypes from 'prop-types';
-import colors from '../utils/colors';
+import { Ionicons } from '@expo/vector-icons'; // For heart icon
+import { useTheme } from "../components/ThemeContext";
 
-const ContactListItem = ({
-  name, avatar, phone, onPress,
-}) => {
+const ContactListItem = ({ name, avatar, phone, onPress, isFavorite, onFavoriteToggle, onLongPress }) => {
+  const [scaleValue] = useState(new Animated.Value(1)); // For animation
+  const { colors } = useTheme();
+
+  const handleFavoritePress = () => {
+    Animated.sequence([
+      Animated.timing(scaleValue, {
+        toValue: 1.5,
+        duration: 150,
+        useNativeDriver: true,
+        easing: Easing.elastic(1),
+      }),
+      Animated.timing(scaleValue, {
+        toValue: 1,
+        duration: 150,
+        useNativeDriver: true,
+      }),
+    ]).start();
+    onFavoriteToggle();
+  };
+
   return (
-    <TouchableHighlight
-      underlayColor={colors.grey}
-      style={styles.container}
-      onPress={onPress}
-    >
-      <View style={styles.contactInfo}>
-        <Image
-          style={styles.avatar}
-          source={{
-            uri: avatar,
-          }}
-        />
+    <View style={[styles.container, { backgroundColor: colors.background }]}>
+      <TouchableOpacity style={styles.contactInfo} onPress={onPress} onLongPress={onLongPress}>
+        <Image style={styles.avatar} source={{ uri: avatar }} />
         <View style={styles.details}>
-          <Text style={styles.title}>{name}</Text>
-          <Text style={styles.subtitle}>{phone}</Text>
+          <Text onPress={onPress} style={[styles.name, { color: colors.text }]}>{name}</Text>
+          <Text onPress={onPress} style={[styles.phone, { color: colors.accent }]}>{phone}</Text>
         </View>
-      </View>
-    </TouchableHighlight>
+      </TouchableOpacity>
+      <TouchableOpacity onPress={handleFavoritePress} style={styles.favoriteButton}>
+        <Animated.View style={{ transform: [{ scale: scaleValue }] }}>
+          <Ionicons
+            name={isFavorite ? 'heart' : 'heart-outline'}
+            size={30}
+            color={isFavorite ? colors.accent : colors.text}
+          />
+        </Animated.View>
+      </TouchableOpacity>
+    </View>
   );
 };
+
 
 ContactListItem.propTypes = {
   name: PropTypes.string,
   avatar: PropTypes.string,
   phone: PropTypes.string,
   onPress: PropTypes.func,
+  isFavorite: PropTypes.bool,
+  onFavoriteToggle: PropTypes.func,
+  onLongPress: PropTypes.func,
 };
 
 const styles = StyleSheet.create({
   container: {
-    paddingLeft: 24,
-  },
-  contactInfo: {
-    flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
-    paddingTop: 16,
-    paddingBottom: 16,
-    paddingRight: 24,
-    borderBottomColor: colors.grey,
-    borderBottomWidth: StyleSheet.hairlineWidth,
+    paddingVertical: 20,
+    paddingHorizontal: 16,
+    borderRadius: 8,
+    marginVertical: 8,
+  },
+  contactInfo: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    flex: 1,
   },
   avatar: {
-    borderRadius: 22,
-    width: 44,
-    height: 44,
+    width: 55, // Slightly larger avatar
+    height: 55,
+    borderRadius: 27.5,
   },
   details: {
-    justifyContent: 'center',
-    flex: 1,
-    marginLeft: 20,
+    marginLeft: 15,
   },
-  title: {
-    color: colors.black,
-    fontWeight: 'bold',
-    fontSize: 16,
+  name: {
+    fontSize: 17,
+    fontWeight: '600',
+    color: '#333', // Darker color for text contrast
   },
-  subtitle: {
-    color: colors.blue,
-    fontSize: 15,
+  phone: {
     marginTop: 4,
+    fontSize: 14,
+    color: 'rgba(0, 122, 255, 0.8)', // Blue with slight transparency
+  },
+  favoriteButton: {
+    marginLeft: 16,
   },
 });
 

@@ -1,70 +1,113 @@
-import React, { useState, useEffect } from "react";
-import {
-  StyleSheet,
-  Text,
-  View,
-  FlatList,
-  ActivityIndicator,
-} from "react-native";
-import { fetchContacts } from "../utils/api";
+import React from "react";
+import { StyleSheet, Text, View, FlatList, ActivityIndicator, SafeAreaView, Alert } from "react-native";
+import { useSelector, useDispatch } from "react-redux";
 import ContactThumbnail from "../components/ContactThumbnail";
-import { useDispatch, useSelector } from 'react-redux';
-const keyExtractor = ({ phone }) => phone;
-const Favorites = ({ navigation }) => {
-  //state
-  const { contacts = [], loading, error } = useSelector((state) => state.contacts);
+import { toggleFavorite } from "../components/store";
+import { useTheme } from "../components/ThemeContext";
 
-  //const favorites = contacts.filter((contact) => contact.favorite);
-  //Load du lieu
-  useEffect(() => {
-    fetchContacts()
-      .then((contacts) => {
-        setContacts(contacts);
-        setLoading(false);
-        setError(false);
-      })
-      .catch((e) => {
-        setLoading(false);
-        setError(true);
-      });
-  });
+const keyExtractor = ({ phone }) => phone;
+
+const Favorites = ({ navigation }) => {
+  const dispatch = useDispatch();
+  const { contacts = [], loading, error } = useSelector((state) => state.contacts);
+  const favorites = contacts.filter(contact => contact.favorite);
+  const { colors, isDarkMode } = useTheme();
+
+  const showOptions = (contact) => {
+    const options = [
+      {
+        text: "Delete",
+        onPress: () => dispatch(toggleFavorite({ phone: contact.phone })),
+        style: "destructive",
+      },
+      {
+        text: "Profile",
+        onPress: () => navigation.navigate("Profile", { contact }),
+      },
+      {
+        text: "Cancel",
+        style: "cancel",
+      },
+    ];
+
+    Alert.alert("Options", "What would you like to do?", options, { cancelable: true });
+  };
+
+  const handleLongPress = (contact) => showOptions(contact);
+
   const renderFavoriteThumbnail = ({ item }) => {
-    const { avatar } = item;
+    const { avatar, name, phone } = item;
     return (
-      <View>
-        <ContactThumbnail
+      <ContactThumbnail
+        name={name}
+        phone={phone}
         avatar={avatar}
         onPress={() => navigation.navigate("Profile", { contact: item })}
+        onLongPress={() => handleLongPress(item)}
+        textColor={colors.text}
       />
-      <Text> test </Text>
-      </View>
     );
   };
-  const favorites = contacts.filter((contact) => contact.favorite);
+
   return (
-    <View style={styles.container}>
-      {loading && <ActivityIndicator size="large" />}
-      {error && <Text>Error...</Text>}
-      {!loading && !error && (
+    <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
+      <Text style={[styles.header, { color: colors.accent }]}>Favorites</Text>
+      {loading && (
+        <View style={styles.centerContent}>
+          <ActivityIndicator color={colors.accent} size="large" />
+        </View>
+      )}
+      {error && (
+        <View style={styles.centerContent}>
+          <Text style={[styles.errorText, { color: colors.accent }]}>Couldn't load favorites</Text>
+        </View>
+      )}
+      {!loading && !error && favorites.length === 0 && (
+        <View style={styles.centerContent}>
+          <Text style={[styles.noFavoritesText, { color: colors.text }]}>No favorites yet</Text>
+        </View>
+      )}
+      {!loading && !error && favorites.length > 0 && (
         <FlatList
           data={favorites}
           keyExtractor={keyExtractor}
-          numColumns={3}
+          numColumns={2}
           contentContainerStyle={styles.list}
           renderItem={renderFavoriteThumbnail}
         />
       )}
-    </View>
+    </SafeAreaView>
   );
 };
+
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: "white",
-    justifyContent: "center",
     flex: 1,
+  },
+  header: {
+    fontSize: 28,
+    fontWeight: '700',
+    padding: 20,
+    paddingTop: 50,
+    textAlign: 'center',
   },
   list: {
     alignItems: "center",
+    paddingBottom: 20,
+  },
+  centerContent: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  errorText: {
+    textAlign: "center",
+    fontSize: 18,
+  },
+  noFavoritesText: {
+    textAlign: "center",
+    fontSize: 18,
   },
 });
+
 export default Favorites;

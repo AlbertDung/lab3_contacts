@@ -1,8 +1,9 @@
 import { createSlice, configureStore } from "@reduxjs/toolkit";
+
 const contactsSlice = createSlice({
   name: "contacts",
   initialState: {
-    contacts: [],
+    contacts: [], // List of contacts
     loading: false,
     error: false,
   },
@@ -20,16 +21,29 @@ const contactsSlice = createSlice({
       state.loading = false;
       state.error = true;
     },
+    toggleFavorite: (state, action) => {
+      // Find the contact by phone number and toggle the favorite status
+      const contact = state.contacts.find(
+        (contact) => contact.phone === action.payload.phone
+      );
+      if (contact) {
+        contact.favorite = !contact.favorite; // Toggle the favorite status
+      }
+    },
   },
 });
+
+// Export actions
 export const {
   fetchContactsLoading,
   fetchContactsSuccess,
   fetchContactsError,
+  toggleFavorite, // Export the new action for toggling favorites
 } = contactsSlice.actions;
-export default Store = configureStore({
+
+// Create and export the store
+export default configureStore({
   reducer: {
-    contacts: contactsSlice.reducer,  // Use "contacts" as the key
+    contacts: contactsSlice.reducer,
   },
 });
-

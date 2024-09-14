@@ -1,28 +1,28 @@
 import React from "react";
-import { View, Text } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import { createMaterialBottomTabNavigator } from "@react-navigation/material-bottom-tabs";
+import { MaterialIcons } from "@expo/vector-icons";
 import Contacts from "../screens/Contacts";
 import Profile from "../screens/Profile";
 import Favorites from "../screens/Favorites";
 import User from "../screens/User";
-import Options from "../screens/Options"
-import { MaterialIcons } from "@expo/vector-icons";
-import colors from "../utils/colors";
-import { createMaterialBottomTabNavigator } from "@react-navigation/material-bottom-tabs";
-const getTabBarIcon =
-  (icon) =>
-  ({ tintColor }) =>
-    <MaterialIcons name={icon} size={26} style={{ color: tintColor }} />;
+import Options from "../screens/Options";
+import { useTheme } from "./ThemeContext";
+
+const getTabBarIcon = (icon) => ({ color }) => (
+  <MaterialIcons name={icon} size={26} style={{ color }} />
+);
+
 const Stack = createNativeStackNavigator();
+const Tab = createMaterialBottomTabNavigator();
+
 const ContactsScreens = () => {
+  const { colors } = useTheme();
   return (
     <Stack.Navigator
       initialRouteName="Contacts"
       screenOptions={{
-        // headerTintColor: "white",
-        // headerStyle: { backgroundColor: "tomato" },
-        // headerTitleAlign: "center",
         headerShown: false,
       }}
     >
@@ -39,9 +39,9 @@ const ContactsScreens = () => {
           const { name } = contact;
           return {
             title: name.split(" ")[0],
-            headerTintColor: "white",
+            headerTintColor: colors.text,
             headerStyle: {
-              backgroundColor: colors.blue,
+              backgroundColor: colors.background,
             },
           };
         }}
@@ -49,28 +49,29 @@ const ContactsScreens = () => {
     </Stack.Navigator>
   );
 };
-const FavoritesScreens = () => {
-  return (
-    <Stack.Navigator
-      initialRouteName="Favorites"
-      screenOptions={{
-        headerShown: false,
-      }}
-    >
-      <Stack.Screen
-        name="Favorites"
-        component={Favorites}
-        options={{ title: "Favorites" }}
-      />
-      <Stack.Screen
-        name="Profile"
-        component={Profile}
-        options={{ title: "Profile" }}
-      />
-    </Stack.Navigator>
-  );
-};
+
+const FavoritesScreens = () => (
+  <Stack.Navigator
+    initialRouteName="Favorites"
+    screenOptions={{
+      headerShown: false,
+    }}
+  >
+    <Stack.Screen
+      name="Favorites"
+      component={Favorites}
+      options={{ title: "Favorites" }}
+    />
+    <Stack.Screen
+      name="Profile"
+      component={Profile}
+      options={{ title: "Profile" }}
+    />
+  </Stack.Navigator>
+);
+
 const UserScreens = ({ navigation }) => {
+  const { colors } = useTheme();
   return (
     <Stack.Navigator initialRouteName="User">
       <Stack.Screen
@@ -78,15 +79,15 @@ const UserScreens = ({ navigation }) => {
         component={User}
         options={{
           headerTitle: "Me",
-          headerTintColor: "white",
+          headerTintColor: colors.text,
           headerStyle: {
-            backgroundColor: colors.blue,
+            backgroundColor: colors.background,
           },
           headerRight: () => (
             <MaterialIcons
               name="settings"
               size={24}
-              style={{ color: "white", marginRight: 10 }}
+              style={{ color: colors.text, marginRight: 10 }}
               onPress={() => navigation.navigate("Options")}
             />
           ),
@@ -100,16 +101,16 @@ const UserScreens = ({ navigation }) => {
     </Stack.Navigator>
   );
 };
-const Tab = createMaterialBottomTabNavigator();
+
 const TabNavigator = () => {
+  const { colors } = useTheme();
   return (
     <NavigationContainer>
       <Tab.Navigator
         initialRouteName="ContactsScreens"
-        barStyle={{ backgroundColor: colors.blue }}
-        labeled={false}
-        activeTintColor={colors.greyLight}
-        inactiveColor={colors.greyDark}
+        barStyle={{ backgroundColor: colors.background }}
+        activeColor={colors.accent}
+        inactiveColor={colors.text}
       >
         <Tab.Screen
           name="ContactsScreens"
@@ -136,6 +137,5 @@ const TabNavigator = () => {
     </NavigationContainer>
   );
 };
+
 export default TabNavigator;
-
-
