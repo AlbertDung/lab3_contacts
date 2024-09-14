@@ -2,12 +2,13 @@ import React from 'react';
 import { StyleSheet, View, Text } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import PropTypes from 'prop-types';
-
-import colors from '../utils/colors';
+import { useTheme } from '../components/ThemeContext'; // Import ThemeContext
 
 const DetailListItem = ({ icon, title, subtitle }) => {
+  const { colors } = useTheme(); // Lấy màu sắc từ ThemeContext
+
   return (
-    <View style={styles.borderContainer}>
+    <View style={[styles.borderContainer, { borderBottomColor: colors.border }]}>
       <View style={styles.wrapper}>
         <View style={styles.container}>
           {icon && (
@@ -15,14 +16,14 @@ const DetailListItem = ({ icon, title, subtitle }) => {
               name={icon}
               size={24}
               style={{
-                color: colors.black,
+                color: colors.accent,
                 marginRight: 20,
               }}
             />
           )}
           <View style={styles.contentContainer}>
-            <Text style={styles.title}>{title}</Text>
-            {subtitle && <Text style={styles.subtitle}>{subtitle}</Text>}
+            <Text style={[styles.title, { color: colors.text }]}>{title}</Text>
+            {subtitle && <Text style={[styles.subtitle, { color: colors.text }]}>{subtitle}</Text>}
           </View>
         </View>
       </View>
@@ -45,7 +46,6 @@ const styles = StyleSheet.create({
     paddingTop: 16,
     paddingBottom: 16,
     paddingRight: 24,
-    borderBottomColor: colors.grey,
     borderBottomWidth: StyleSheet.hairlineWidth,
   },
   container: {
@@ -58,12 +58,10 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   title: {
-    color: colors.black,
     fontWeight: 'bold',
     fontSize: 16,
   },
   subtitle: {
-    color: colors.blue,
     fontSize: 15,
     marginTop: 4,
   },

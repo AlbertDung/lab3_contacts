@@ -37,13 +37,13 @@ export const ThemeProvider = ({ children }) => {
     toggleTheme,
     colors: isDarkMode
       ? {
-          primary: '#D72323',
+          primary: '#EA5455',
           background: '#303841',
           text: '#EEEEEE',
           accent: '#FF2E63',
         }
       : {
-          primary: '#FC5185',
+          primary: '#FF2E63',
           background: '#F5F5F5',
           text: '#40514E',
           accent: '#FC5185',
