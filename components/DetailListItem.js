@@ -1,33 +1,31 @@
 import React from 'react';
-import { StyleSheet, View, Text } from 'react-native';
+import { StyleSheet, View, Text, TouchableOpacity } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import PropTypes from 'prop-types';
 import { useTheme } from '../components/ThemeContext'; // Import ThemeContext
 
-const DetailListItem = ({ icon, title, subtitle }) => {
-  const { colors } = useTheme(); // Lấy màu sắc từ ThemeContext
+const DetailListItem = ({ icon, title, subtitle, onPress }) => {
+  const { colors } = useTheme(); // Get colors from ThemeContext
 
   return (
-    <View style={[styles.borderContainer, { borderBottomColor: colors.border }]}>
-      <View style={styles.wrapper}>
-        <View style={styles.container}>
-          {icon && (
-            <Icon
-              name={icon}
-              size={24}
-              style={{
-                color: colors.accent,
-                marginRight: 20,
-              }}
-            />
-          )}
-          <View style={styles.contentContainer}>
-            <Text style={[styles.title, { color: colors.text }]}>{title}</Text>
-            {subtitle && <Text style={[styles.subtitle, { color: colors.text }]}>{subtitle}</Text>}
-          </View>
+    <TouchableOpacity onPress={onPress} style={[styles.wrapper, { borderBottomColor: colors.border }]}>
+      <View style={styles.container}>
+        {icon && (
+          <Icon
+            name={icon}
+            size={24}
+            style={{
+              color: colors.accent,
+              marginRight: 20,
+            }}
+          />
+        )}
+        <View style={styles.contentContainer}>
+          <Text style={[styles.title, { color: colors.text }]}>{title}</Text>
+          {subtitle && <Text style={[styles.subtitle, { color: colors.text }]}>{subtitle}</Text>}
         </View>
       </View>
-    </View>
+    </TouchableOpacity>
   );
 };
 
@@ -35,12 +33,10 @@ DetailListItem.propTypes = {
   icon: PropTypes.string,
   title: PropTypes.string.isRequired,
   subtitle: PropTypes.string,
+  onPress: PropTypes.func, // Add onPress prop type
 };
 
 const styles = StyleSheet.create({
-  borderContainer: {
-    paddingLeft: 24,
-  },
   wrapper: {
     flexDirection: 'row',
     paddingTop: 16,

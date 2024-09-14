@@ -1,13 +1,15 @@
 import React from "react";
-import { StyleSheet, View, Text } from "react-native";
+import { StyleSheet, View } from "react-native";
 import ContactThumbnail from "../components/ContactThumbnail";
 import DetailListItem from "../components/DetailListItem";
-import { useTheme } from "../components/ThemeContext"; // Import ThemeContext
+import { useTheme } from "../components/ThemeContext";
+import Call from "./Call";// Import the functions
+import { Email } from "./Call";
 
 const Profile = ({ route }) => {
   const { contact } = route.params;
   const { avatar, name, email, phone, cell } = contact;
-  const { colors } = useTheme(); // Lấy màu sắc từ ThemeContext
+  const { colors } = useTheme();
 
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
@@ -15,9 +17,24 @@ const Profile = ({ route }) => {
         <ContactThumbnail avatar={avatar} name={name} phone={phone} />
       </View>
       <View style={[styles.detailsSection, { backgroundColor: colors.background }]}>
-        <DetailListItem icon="mail" title="Email" subtitle={email} />
-        <DetailListItem icon="phone" title="Work" subtitle={phone} />
-        <DetailListItem icon="smartphone" title="Personal" subtitle={cell} />
+        <DetailListItem 
+          icon="mail" 
+          title="Email" 
+          subtitle={email}
+          onPress={() => Email(email)} // Handle email press
+        />
+        <DetailListItem 
+          icon="phone" 
+          title="Work" 
+          subtitle={phone}
+          onPress={() => Call(phone)} // Handle call press
+        />
+        <DetailListItem 
+          icon="smartphone" 
+          title="Personal" 
+          subtitle={cell}
+          onPress={() => Call(cell)} // Handle call press
+        />
       </View>
     </View>
   );
